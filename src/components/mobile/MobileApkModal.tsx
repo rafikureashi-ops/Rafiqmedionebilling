@@ -17,7 +17,12 @@ import {
   FileCode,
   AlertTriangle,
   Layers,
-  Sparkles
+  Sparkles,
+  Github,
+  FolderGit2,
+  Workflow,
+  CloudUpload,
+  ArrowRight
 } from 'lucide-react';
 
 interface MobileApkModalProps {
@@ -26,9 +31,10 @@ interface MobileApkModalProps {
 
 export const MobileApkModal: React.FC<MobileApkModalProps> = ({ onClose }) => {
   const { isInstallable, isInstalled, install } = usePWAInstall();
-  const [activeTab, setActiveTab] = useState<'download' | 'webapk' | 'qrcode' | 'capacitor'>('download');
+  const [activeTab, setActiveTab] = useState<'download' | 'github' | 'webapk' | 'qrcode' | 'capacitor'>('download');
   const [qrCodeUrl, setQrCodeUrl] = useState<string>('');
   const [copied, setCopied] = useState(false);
+  const [copiedGit, setCopiedGit] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
   const [downloadSuccess, setDownloadSuccess] = useState(false);
 
@@ -72,6 +78,23 @@ export const MobileApkModal: React.FC<MobileApkModalProps> = ({ onClose }) => {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+  };
+
+  const handleDownloadGithubProject = () => {
+    const link = document.createElement('a');
+    link.href = '/download/medione-github-project.zip';
+    link.setAttribute('download', 'medione-github-project.zip');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const gitCommandsText = `git remote add origin https://github.com/YOUR_USERNAME/YOUR_REPO.git\ngit push -u origin main`;
+
+  const handleCopyGitCommands = () => {
+    navigator.clipboard.writeText(gitCommandsText);
+    setCopiedGit(true);
+    setTimeout(() => setCopiedGit(false), 2000);
   };
 
   const handleCopyLink = () => {
@@ -124,6 +147,21 @@ export const MobileApkModal: React.FC<MobileApkModalProps> = ({ onClose }) => {
           >
             <Download className="w-3.5 h-3.5" />
             <span>Direct Download debug.apk</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab('github')}
+            className={`py-3 px-3.5 border-b-2 whitespace-nowrap transition-colors flex items-center gap-1.5 ${
+              activeTab === 'github'
+                ? 'border-emerald-600 text-emerald-600 dark:text-emerald-400 font-bold'
+                : 'border-transparent text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
+            }`}
+          >
+            <Github className="w-3.5 h-3.5" />
+            <span>GitHub Actions APK (گٹ ہب سے APK)</span>
+            <span className="px-1.5 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 text-[9px] font-black uppercase">
+              Auto
+            </span>
           </button>
 
           <button
@@ -305,7 +343,168 @@ export const MobileApkModal: React.FC<MobileApkModalProps> = ({ onClose }) => {
             </div>
           )}
 
-          {/* TAB 2: WebAPK Direct Install */}
+          {/* TAB 2: GitHub APK Auto-Build */}
+          {activeTab === 'github' && (
+            <div className="space-y-5">
+              {/* GitHub Header Card */}
+              <div className="p-5 rounded-2xl border-2 border-slate-700/40 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white space-y-4 shadow-lg">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center text-white shadow-inner shrink-0">
+                      <Github className="w-7 h-7" />
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <h4 className="text-base font-bold text-white">
+                          GitHub Actions Automated APK Builder
+                        </h4>
+                        <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[10px] font-black uppercase tracking-wider">
+                          Ready &amp; Configured
+                        </span>
+                      </div>
+                      <p className="text-xs text-slate-300 mt-0.5">
+                        GitHub CI/CD workflow <code className="text-emerald-400 font-mono text-[11px]">.github/workflows/build-apk.yml</code> is set up!
+                      </p>
+                    </div>
+                  </div>
+
+                  <a
+                    href="https://github.com/new"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white text-xs font-semibold flex items-center gap-1.5 transition self-start sm:self-auto border border-white/15"
+                  >
+                    <ExternalLink className="w-3.5 h-3.5" />
+                    <span>Create Repo on GitHub</span>
+                  </a>
+                </div>
+
+                <p className="text-xs text-slate-300 leading-relaxed bg-slate-950/40 p-3 rounded-xl border border-slate-700/40">
+                  <strong className="text-white">اردو رہنمائی:</strong> اس پروجیکٹ میں خودکار GitHub Actions ورک فلو اور مکمل اینڈرائیڈ گریڈل سورس کوڈ تیار کر دیا گیا ہے۔ آپ صرف کوڈ GitHub پر پش کریں، GitHub کلاؤڈ پر آپ کی <code className="text-emerald-300">medione-pharmacy-debug.apk</code> بنا کر دے گا جسے آپ فوری ڈاؤن لوڈ کر سکتے ہیں!
+                </p>
+
+                {/* Download Entire GitHub Ready Project (.zip) */}
+                <div className="p-4 rounded-xl bg-gradient-to-r from-emerald-950/60 via-teal-950/40 to-slate-900 border border-emerald-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <div>
+                    <div className="flex items-center gap-2 text-sm font-bold text-emerald-300">
+                      <FolderGit2 className="w-4 h-4" />
+                      <span>Download GitHub-Ready Project Zip (13 MB)</span>
+                    </div>
+                    <p className="text-xs text-slate-300 mt-0.5">
+                      Includes <code className="text-slate-200 font-mono text-[11px]">.github/workflows</code>, <code className="text-slate-200 font-mono text-[11px]">android/</code>, and full source code
+                    </p>
+                  </div>
+                  <button
+                    onClick={handleDownloadGithubProject}
+                    className="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold flex items-center justify-center gap-2 shadow-lg shadow-emerald-700/30 transition shrink-0"
+                  >
+                    <Download className="w-4 h-4" />
+                    <span>Download Project .zip</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Step-by-Step Instructions */}
+              <div className="p-4 sm:p-5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 space-y-4">
+                <h5 className="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-2">
+                  <Workflow className="w-4 h-4 text-emerald-600" />
+                  <span>How to Get APK from GitHub (گٹ ہب سے APK حاصل کرنے کا طریقہ)</span>
+                </h5>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                  {/* Step 1 */}
+                  <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 text-xs space-y-2">
+                    <div className="flex items-center gap-2">
+                      <span className="w-5 h-5 rounded-full bg-emerald-600 text-white font-bold inline-flex items-center justify-center text-[11px]">
+                        1
+                      </span>
+                      <strong className="text-slate-900 dark:text-white">Push Code to GitHub (کوڈ پش کریں)</strong>
+                    </div>
+                    <p className="text-slate-600 dark:text-slate-300 text-[11px] leading-relaxed">
+                      Terminal mein yeh commands chalayein ya GitHub website par files upload karein:
+                    </p>
+                    <div className="bg-slate-900 text-slate-100 p-2.5 rounded-lg font-mono text-[10px] relative group overflow-x-auto">
+                      <pre className="text-emerald-400 whitespace-pre-wrap">{gitCommandsText}</pre>
+                      <button
+                        onClick={handleCopyGitCommands}
+                        className="mt-2 px-2 py-1 bg-slate-800 hover:bg-slate-700 text-white text-[10px] rounded flex items-center gap-1 transition"
+                      >
+                        {copiedGit ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
+                        <span>{copiedGit ? 'Copied Commands!' : 'Copy Git Commands'}</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Step 2 */}
+                  <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 text-xs space-y-2">
+                    <div className="flex items-center gap-2">
+                      <span className="w-5 h-5 rounded-full bg-emerald-600 text-white font-bold inline-flex items-center justify-center text-[11px]">
+                        2
+                      </span>
+                      <strong className="text-slate-900 dark:text-white">Go to &quot;Actions&quot; Tab (ایکشنز ٹیب کھولیں)</strong>
+                    </div>
+                    <p className="text-slate-600 dark:text-slate-300 text-[11px] leading-relaxed">
+                      Apne GitHub repository page par upar <strong>Actions</strong> tab par click karein.
+                    </p>
+                    <div className="p-2.5 bg-slate-100 dark:bg-slate-800 rounded-lg text-[11px] space-y-1">
+                      <p className="font-semibold text-slate-800 dark:text-slate-200 flex items-center gap-1.5">
+                        <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                        <span>Workflow: &quot;Build &amp; Release Android APK&quot;</span>
+                      </p>
+                      <p className="text-slate-500 dark:text-slate-400 text-[10px]">
+                        Push hote hi GitHub automatically Ubuntu runner par APK banana shuru kar dega (2-3 mins).
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Step 3 */}
+                  <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 text-xs space-y-2">
+                    <div className="flex items-center gap-2">
+                      <span className="w-5 h-5 rounded-full bg-emerald-600 text-white font-bold inline-flex items-center justify-center text-[11px]">
+                        3
+                      </span>
+                      <strong className="text-slate-900 dark:text-white">Download APK Artifact (فائل ڈاؤن لوڈ کریں)</strong>
+                    </div>
+                    <p className="text-slate-600 dark:text-slate-300 text-[11px] leading-relaxed">
+                      Completed green checkmark ✅ wale run par click karein aur page ke niche jayein:
+                    </p>
+                    <div className="p-2.5 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 rounded-lg text-[11px] space-y-1">
+                      <div className="flex items-center justify-between font-bold text-emerald-800 dark:text-emerald-300">
+                        <span>📦 Artifacts Section</span>
+                        <span className="text-[10px] bg-emerald-200 dark:bg-emerald-900 px-1.5 py-0.5 rounded">Ready</span>
+                      </div>
+                      <p className="text-emerald-700 dark:text-emerald-400 font-mono text-[11px]">
+                        👉 medione-pharmacy-debug-apk
+                      </p>
+                      <p className="text-[10px] text-slate-500 dark:text-slate-400">
+                        Is par click karte hi APK download shuru ho jayegi!
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Step 4 */}
+                  <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 text-xs space-y-2">
+                    <div className="flex items-center gap-2">
+                      <span className="w-5 h-5 rounded-full bg-emerald-600 text-white font-bold inline-flex items-center justify-center text-[11px]">
+                        4
+                      </span>
+                      <strong className="text-slate-900 dark:text-white">GitHub Releases (مستقل ڈاؤن لوڈ لنک)</strong>
+                    </div>
+                    <p className="text-slate-600 dark:text-slate-300 text-[11px] leading-relaxed">
+                      Repository ke right sidebar mein <strong>Releases</strong> section se direct <code>medione-pharmacy-debug.apk</code> download ki ja sakti hai.
+                    </p>
+                    <div className="p-2.5 bg-slate-100 dark:bg-slate-800 rounded-lg text-[11px]">
+                      <span className="font-semibold text-slate-700 dark:text-slate-300">
+                        Phone ya PC dono par direct download link hamesha live rahega!
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* TAB 3: WebAPK Direct Install */}
           {activeTab === 'webapk' && (
             <div className="space-y-4">
               <div className="p-4 rounded-xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800">

@@ -37,6 +37,17 @@ async function startServer() {
     }
   });
 
+  app.get(['/download/medione-github-project.zip', '/download/github.zip', '/download/github-project.zip'], (req, res) => {
+    const zipPath = path.resolve(__dirname, 'public/downloads/medione-github-project.zip');
+    if (fs.existsSync(zipPath)) {
+      res.setHeader('Content-Type', 'application/zip');
+      res.setHeader('Content-Disposition', 'attachment; filename="medione-github-project.zip"');
+      res.sendFile(zipPath);
+    } else {
+      res.status(404).send('GitHub project bundle not found');
+    }
+  });
+
   // API router
   app.use('/api', apiRouter);
 
