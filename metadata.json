@@ -1,0 +1,6 @@
+{
+  "name": "MediOneBilling - Pharmacy Management & Billing SaaS",
+  "description": "Professional pharmacy management, GST billing, inventory with batch expiry tracking, offline sync, and subscription software for Indian medical stores.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
